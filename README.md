@@ -11,3 +11,7 @@ Want to learn more? [See the wiki.](https://github.com/square/crossfilter/wiki)
 Crossfilter is **not under active development, maintenance or support by Square**, or its original author Mike Bostock, or the current contributors (Jason Davies, Tom Carden). We still welcome genuine bug-fixes and PRs but consider the current API and feature-set (~1.3.12) essentially complete.
 
 A new [Crossfilter Organization](https://github.com/crossfilter) has been created on Github and is home to an [actively maintained fork of Crossfilter](https://github.com/crossfilter/crossfilter). This version is already used by popular library [DC.js](https://dc-js.github.io/dc.js/) and the contributors are working on improved APIs and performance improvements for current Javascript VMs. There are no plans to merge or publish new versions under the original Square repository or npm package.
+
+## My Contributions
+
+I forked this repository, and I have played around and made changes only on the gh-pages branch. You can see the changes I made at: https://nyoungstudios.github.io/crossfilter/
