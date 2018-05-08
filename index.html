@@ -354,27 +354,27 @@ d3.csv("flights-3m.json", function(error, flights) {
   var delayToggle = true;
   //function for change filter to delay
   window.delay = function() {
-    var delayList = d3.selectAll(".list")
+    list = d3.selectAll(".list")
       .data([airportList]);
-    delayList.each(render);
+    list.each(render);
   };
   
   //variable to for toggling top of bottom of time list
   var timeToggle = true;
   //function for change filter to time
   window.time = function () {
-    var timeList = d3.selectAll(".list")
+    list = d3.selectAll(".list")
       .data([flightList]);
-    timeList.each(render)
+    list.each(render)
   };
   
   //variable to for toggling top of bottom of distance list
   var distanceToggle = true;
   //function for change filter to distance
   window.distance = function () {
-    var distanceList = d3.selectAll(".list")
+    list = d3.selectAll(".list")
       .data([milesList]);
-    distanceList.each(render)
+    list.each(render)
   };
   
   
