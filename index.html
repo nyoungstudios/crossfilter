@@ -325,10 +325,26 @@ d3.csv("flights-3m.json", function(error, flights) {
 
   // Whenever the brush moves, re-rendering everything.
   function renderAll() {
+    //theses fix the flickering
+    if (distanceToggle) {
+      distanceToggle = false;
+    } else {
+      distanceToggle = true;
+    }
+    if (delayToggle) {
+      delayToggle = false;
+    } else {
+      delayToggle = true;
+    }
+    if (timeToggle) {
+      timeToggle = false;
+    } else {
+      timeToggle = true;
+    }
+    
     chart.each(render);
     list.each(render);
     d3.select("#active").text(formatNumber(all.value()));
-    d3.select("#location").text(formatNumber(all.value()));
   }
 
   // Like d3.time.format, but faster.
@@ -354,6 +370,9 @@ d3.csv("flights-3m.json", function(error, flights) {
   var delayToggle = true;
   //function for change filter to delay
   window.delay = function() {
+    //resets toggles
+    timeToggle = true;
+    distanceToggle = true;
     list = d3.selectAll(".list")
       .data([airportList]);
     list.each(render);
@@ -363,6 +382,9 @@ d3.csv("flights-3m.json", function(error, flights) {
   var timeToggle = true;
   //function for change filter to time
   window.time = function () {
+    //resets toggles
+    delayToggle = true;
+    distanceToggle = true;
     list = d3.selectAll(".list")
       .data([flightList]);
     list.each(render)
@@ -372,6 +394,9 @@ d3.csv("flights-3m.json", function(error, flights) {
   var distanceToggle = true;
   //function for change filter to distance
   window.distance = function () {
+    //resets toggles
+    delayToggle = true;
+    timeToggle = true;
     list = d3.selectAll(".list")
       .data([milesList]);
     list.each(render)
