@@ -147,6 +147,10 @@ h1, h2 {
   color: green;
 }
 
+#flight-list .late {
+  color: red;
+}
+  
 aside {
   position: absolute;
   left: 740px;
@@ -172,7 +176,7 @@ aside {
 
 <p>The coordinated visualizations below (built with <a href="http://mbostock.github.com/d3/">D3</a>) show nearly a quarter-million flights from early 2001: part of the <a href="http://stat-computing.org/dataexpo/2009/">ASA Data Expo</a> dataset. The dataset is 5.3MB, so it might take a few seconds to download. Click and drag on any chart to filter by the associated dimension. The table beneath shows the eighty most recent flights that match the current filters; these are the <i>details on demand</i>, anecdotal evidence you can use to weigh different hypotheses.
 
-<p>Some questions to consider: How does time-of-day correlate with <a href="javascript:filter([null, [100, 150], null, null])">arrival delay</a>? Are <a href="javascript:filter([null, null, [1700, 2000], null])">longer</a> or <a href="javascript:filter([null, null, [0, 300], null])">shorter</a> flights more likely to arrive early? What happened on <a href="javascript:filter([null, [80, 150], null, [new Date(2001, 0, 12), new Date(2001, 0, 13)]])">January 12</a>? How do flight patterns differ between <a href="javascript:filter([null, null, null, [new Date(2001, 0, 27), new Date(2001, 0, 29)]])">weekends</a> and <a href="javascript:filter([null, null, null, [new Date(2001, 0, 29), new Date(2001, 1, 3)]])">weekdays</a>, or <a href="javascript:filter([[4, 7], null, null, null])">mornings</a> and <a href="javascript:filter([[21, 24], null, null, null])">nights</a>? <a href="https://github.com/nyoungstudios/crossfilter/tree/gh-pages">Fork this example</a> and try your own data!
+<p>Some questions to consider: How does time-of-day correlate with <a href="javascript:filter([null, [100, 150], null, null])">arrival delay</a>? Are <a href="javascript:filter([null, null, [1700, 2000], null])">longer</a> or <a href="javascript:filter([null, null, [0, 300], null])">shorter</a> flights more likely to arrive early? What happened on <a href="javascript:filter([null, [80, 150], null, [new Date(2001, 0, 12), new Date(2001, 0, 13)]])">January 12</a>? How do flight patterns differ between <a href="javascript:filter([null, null, null, [new Date(2001, 0, 27), new Date(2001, 0, 29)]])">weekends</a> and <a href="javascript:filter([null, null, null, [new Date(2001, 0, 29), new Date(2001, 1, 3)]])">weekdays</a>, or <a href="javascript:filter([[4, 7], null, null, null])">mornings</a> and <a href="javascript:filter([[21, 24], null, null, null])">nights</a>? How does the longest flight distance differ between <a href="javascript:filterExample([[0, 6], null, null, null])">super early mornings</a> and <a href="javascript:filterExample([[18, 24], null, null, null])">super late nights</a>? Which flights were <a href="javascript:filter([null, [0,1], null, null])">ontime</a>? <a href="https://github.com/nyoungstudios/crossfilter/tree/gh-pages">Fork this example</a> and try your own data!
 
 <div id="charts">
   <div id="hour-chart" class="chart">
@@ -355,12 +359,22 @@ d3.csv("flights-3m.json", function(error, flights) {
         d.substring(4, 6),
         d.substring(6, 8));
   }
-
+  
   window.filter = function(filters) {
     filters.forEach(function(d, i) { charts[i].filter(d); });
     renderAll();
   };
 
+  window.filterExample = function(filters) {
+    filters.forEach(function(d, i) { charts[i].filter(d); });
+    distanceToggle = true;
+    list = d3.selectAll(".list")
+      .data([milesList]);
+    renderAll();
+  };
+
+ 
+  
   window.reset = function(i) {
     charts[i].filter(null);
     renderAll();
@@ -450,6 +464,7 @@ d3.csv("flights-3m.json", function(error, flights) {
 
       flightEnter.append("div")
           .attr("class", "delay")
+          .classed("late", function(d) { return d.delay > 0; })  
           .classed("early", function(d) { return d.delay < 0; })
           .text(function(d) { return formatChange(d.delay) + " min."; });
 
@@ -507,6 +522,7 @@ d3.csv("flights-3m.json", function(error, flights) {
 
       flightEnter.append("div")
           .attr("class", "delay")
+          .classed("late", function(d) { return d.delay > 0; })
           .classed("early", function(d) { return d.delay < 0; })
           .text(function(d) { return formatChange(d.delay) + " min."; });
 
@@ -563,6 +579,7 @@ d3.csv("flights-3m.json", function(error, flights) {
 
       flightEnter.append("div")
           .attr("class", "delay")
+          .classed("late", function(d) { return d.delay > 0; })
           .classed("early", function(d) { return d.delay < 0; })
           .text(function(d) { return formatChange(d.delay) + " min."; });
 
