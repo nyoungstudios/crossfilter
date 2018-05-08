@@ -186,10 +186,14 @@ aside {
 </div>
 
 <aside id="totals"><span id="active">-</span> of <span id="total">-</span> flights selected.</aside>
+  
+<div class="title">Sorted by...</div>
+<a class="reset" href="javascript:time()" style="">Time</a>
+<a class="reset" href="javascript:delay()" style="">Delay</a>
+<a class="reset" href="javascript:distance()" style="">Distance</a>
 
 <div id="lists">
   <div id="flight-list" class="list">
-      <div class="title">Sorted by Recent Dates</div>
       <br>
   </div>
 </div>
@@ -236,6 +240,8 @@ d3.csv("flights-3m.json", function(error, flights) {
   var nestByDelay = d3.nest()
       .key(function(d) { return d.delay})
   
+  var nestByMiles = d3.nest()
+      .key(function(d) {return d.distance})
 
   // A little coercion, since the CSV is untyped.
   flights.forEach(function(d, i) {
@@ -255,7 +261,10 @@ d3.csv("flights-3m.json", function(error, flights) {
       delay = flight.dimension(function(d) { return Math.max(-60, Math.min(149, d.delay)); }),
       delays = delay.group(function(d) { return Math.floor(d / 10) * 10; }),
       distance = flight.dimension(function(d) { return Math.min(1999, d.distance); }),
-      distances = distance.group(function(d) { return Math.floor(d / 50) * 50; });
+      distances = distance.group(function(d) { return Math.floor(d / 50) * 50; }),
+      origin = flight.dimension(function(d) { return d.origin}),
+      origins = origin.group();
+  
   
 
   var charts = [
@@ -305,6 +314,7 @@ d3.csv("flights-3m.json", function(error, flights) {
 
   var airport = d3.selectAll(".airport")
       .data([airportList]);
+  
     
   // Render the total.
   d3.selectAll("#total")
@@ -344,6 +354,74 @@ d3.csv("flights-3m.json", function(error, flights) {
     charts[i].filter(null);
     renderAll();
   };
+  
+  window.delay = function() {
+    var delayList = d3.selectAll(".list")
+      .data([airportList]);
+    delayList.each(render);
+  };
+  
+  window.time = function () {
+    var timeList = d3.selectAll(".list")
+      .data([flightList]);
+    timeList.each(render)
+  };
+  
+  window.distance = function () {
+    var distanceList = d3.selectAll(".list")
+      .data([milesList]);
+    distanceList.each(render)
+  };
+  
+  function milesList(div) {
+    var flightsByDistance = nestByMiles.entries(distance.bottom(40))
+
+    div.each(function() {
+      var date = d3.select(this).selectAll(".date")
+          .data(flightsByDistance, function(d) { return d.key; });
+
+      date.enter().append("div")
+          .attr("class", "date")
+        .append("div")
+          .attr("class", "day")
+          .text(function(d) { return formatDate(d.values[0].date); });
+
+      date.exit().remove();
+
+      var flight = date.order().selectAll(".flight")
+          .data(function(d) { return d.values; }, function(d) { return d.index; });
+
+      var flightEnter = flight.enter().append("div")
+          .attr("class", "flight");
+
+      flightEnter.append("div")
+          .attr("class", "time")
+          .text(function(d) { return formatTime(d.date); });
+
+      flightEnter.append("div")
+          .attr("class", "origin")
+          .text(function(d) { return d.origin; });
+
+      flightEnter.append("div")
+          .attr("class", "destination")
+          .text(function(d) { return d.destination; });
+
+      flightEnter.append("div")
+          .attr("class", "distance")
+          .text(function(d) { return formatNumber(d.distance) + " mi."; });
+
+      flightEnter.append("div")
+          .attr("class", "delay")
+          .classed("early", function(d) { return d.delay < 0; })
+          .text(function(d) { return formatChange(d.delay) + " min."; });
+
+      flight.exit().remove();
+
+      flight.order();
+    });
+  }
+
+  
     
   function airportList(div) {
     var flightsByDelay = nestByDelay.entries(delay.bottom(40))
