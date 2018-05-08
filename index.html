@@ -186,11 +186,12 @@ aside {
 </div>
 
 <aside id="totals"><span id="active">-</span> of <span id="total">-</span> flights selected.</aside>
-  
-<div class="title">Sorted by...</div>
-<a class="reset" href="javascript:time()" style="">Time</a>
-<a class="reset" href="javascript:delay()" style="">Delay</a>
-<a class="reset" href="javascript:distance()" style="">Distance</a>
+
+<br>
+<br>
+<div class="title">Sort by <a href="javascript:time()">Time</a>, <a href="javascript:delay()">Delay</a>, 
+  or <a href="javascript:distance()">Distance</a> (click any of these links to change the filter and click again to toggle)</div>
+
 
 <div id="lists">
   <div id="flight-list" class="list">
@@ -200,14 +201,7 @@ aside {
 
 <br>
 <br>
-<aside id="totals"><span id="location">-</span> has the least delays of flights selected.</aside>
-    
-<div id="airport">
-  <div id="flight-list" class="airport">
-      <div class="title">Sorted by Least Delay</div>
-      <br>
-  </div>
-</div>
+
 
 <footer>
   <span style="float:right;">
@@ -312,8 +306,6 @@ d3.csv("flights-3m.json", function(error, flights) {
   var list = d3.selectAll(".list")
       .data([flightList]);
 
-  var airport = d3.selectAll(".airport")
-      .data([airportList]);
   
     
   // Render the total.
@@ -331,7 +323,6 @@ d3.csv("flights-3m.json", function(error, flights) {
   function renderAll() {
     chart.each(render);
     list.each(render);
-    airport.each(render);
     d3.select("#active").text(formatNumber(all.value()));
     d3.select("#location").text(formatNumber(all.value()));
   }
@@ -355,26 +346,44 @@ d3.csv("flights-3m.json", function(error, flights) {
     renderAll();
   };
   
+  //variable to for toggling top of bottom of delay list
+  var delayToggle = true;
+  //function for change filter to delay
   window.delay = function() {
     var delayList = d3.selectAll(".list")
       .data([airportList]);
     delayList.each(render);
   };
   
+  //variable to for toggling top of bottom of time list
+  var timeToggle = true;
+  //function for change filter to time
   window.time = function () {
     var timeList = d3.selectAll(".list")
       .data([flightList]);
     timeList.each(render)
   };
   
+  //variable to for toggling top of bottom of distance list
+  var distanceToggle = true;
+  //function for change filter to distance
   window.distance = function () {
     var distanceList = d3.selectAll(".list")
       .data([milesList]);
     distanceList.each(render)
   };
   
+  
   function milesList(div) {
-    var flightsByDistance = nestByMiles.entries(distance.bottom(40))
+    var flightsByDistance;
+    if (distanceToggle) {
+      flightsByDistance = nestByMiles.entries(distance.bottom(40));
+      distanceToggle = false;
+    } else {
+      flightsByDistance = nestByMiles.entries(distance.top(40));
+      distanceToggle = true;
+    }
+    
 
     div.each(function() {
       var date = d3.select(this).selectAll(".date")
@@ -424,7 +433,14 @@ d3.csv("flights-3m.json", function(error, flights) {
   
     
   function airportList(div) {
-    var flightsByDelay = nestByDelay.entries(delay.bottom(40))
+    var flightsByDelay;
+    if (delayToggle) {
+      flightsByDelay = nestByDelay.entries(delay.bottom(40));
+      delayToggle = false;
+    } else {
+      flightsByDelay = nestByDelay.entries(delay.top(40));
+      delayToggle = true;
+    }
 
     div.each(function() {
       var date = d3.select(this).selectAll(".date")
@@ -473,7 +489,14 @@ d3.csv("flights-3m.json", function(error, flights) {
 
 
   function flightList(div) {
-    var flightsByDate = nestByDate.entries(date.top(40));
+    var flightsByDate;
+    if (timeToggle) {
+      flightsByDate = nestByDate.entries(date.top(40));
+      timeToggle = false;
+    } else {
+      flightsByDate = nestByDate.entries(date.bottom(40));
+      timeToggle = true;
+    }
 
     div.each(function() {
       var date = d3.select(this).selectAll(".date")
