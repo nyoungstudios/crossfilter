@@ -207,7 +207,8 @@ aside {
   </div>
 </div>
 
-
+<div id="dashboard"></div>
+  
 <footer>
   <span style="float:right;">
     Released under the <a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache License 2.0</a>.
@@ -249,6 +250,9 @@ d3.csv("flights-3m.json", function(error, flights) {
     d.delay = +d.delay;
     d.distance = +d.distance;
   });
+  
+  //prints data to console
+  //console.log(flights)
 
   // Create the crossfilter for the relevant dimensions and groups.
   var flight = crossfilter(flights),
@@ -774,6 +778,15 @@ d3.csv("flights-3m.json", function(error, flights) {
     };
 
     return d3.rebind(chart, brush, "on");
+  }
+  
+  pieChart();
+  
+  function pieChart() {
+    var pC ={},    pieDim ={w:250, h: 250};
+    pieDim.r = Math.min(pieDim.w, pieDim.h)/2;
+    
+    
   }
 });
 
