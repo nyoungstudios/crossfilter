@@ -204,12 +204,15 @@ rect:hover {  fill:blue; }
 <div id="charts">
   <div id="hour-chart" class="chart">
     <div class="title">Time of Day</div>
+    
   </div>
   <div id="delay-chart" class="chart">
     <div class="title">Arrival Delay (min.)</div>
+    
   </div>
   <div id="distance-chart" class="chart">
     <div class="title">Distance (mi.)</div>
+  
   </div>
   <div id="date-chart" class="chart">
     <div class="title">Date</div>
@@ -218,6 +221,11 @@ rect:hover {  fill:blue; }
 
 <aside id="totals"><span id="active">-</span> of <span id="total">-</span> flights selected.</aside>
 
+<div id="charts">
+<div id="piehour" class="chart"><div class="title">Time of Day</div></div>
+<div id="piedelay" class="chart"><div class="title">Arrival Delay (min.)</div></div>
+<div id="piedistance" class="chart"><div class="title">Distance (mi.)</div></div>
+</div>
 <br>
 <br>
 <div class="title">Sort by <a href="javascript:time()" class="toggle">Time</a>, <a href="javascript:delay()" class="toggle">Delay</a>, 
@@ -230,7 +238,10 @@ rect:hover {  fill:blue; }
   </div>
 </div>
 
-<div id="dashboard"></div>
+
+
+
+  
   
 <footer>
   <span style="float:right;">
@@ -289,7 +300,7 @@ d3.csv("flights-3m.json", function(error, flights) {
       delays = delay.group(function(d) { return Math.floor(d / 10) * 10; }),
       distance = flight.dimension(function(d) { return d.distance; }),
       distances = distance.group(function(d) { return Math.floor(d / 50) * 50; });
-  
+
   
 
   var charts = [
@@ -372,6 +383,7 @@ d3.csv("flights-3m.json", function(error, flights) {
     chart.each(render);
     list.each(render);
     d3.select("#active").text(formatNumber(all.value()));
+    
   }
 
   // Like d3.time.format, but faster.
@@ -803,17 +815,36 @@ d3.csv("flights-3m.json", function(error, flights) {
 
     return d3.rebind(chart, brush, "on");
   }
-  console.log(chart)
+  //console.log(chart)
   //pieChart()
   //    .dimension(delay)
   //    .group(delays);
   
   
-  var mediumArrayPieChart = dc.pieChart("#dashboard")
-    	    .height(250)
-    	    .width(250)
-    	    .dimension(delay)
-    	    .group(delays);
+  var pieHourChart = dc.pieChart("#piehour")
+      .height(200)
+      .width(250)
+      .dimension(hour)
+      .group(hours)
+  //    .slicesCap(10)
+  ;
+  
+  var pieDelayChart = dc.pieChart("#piedelay")
+      .height(200)
+      .width(250)
+      .dimension(delay)
+      .group(delays);
+
+  var filterDistance = distance.filter();
+  var filterDistances = filterDistance.group(function(d) { return Math.floor(d / 50) * 50; });
+  console.log(filterDistances.all())
+  
+  var pieDistanceChart = dc.pieChart("#piedistance")
+      .height(200)
+      .width(250)
+      .dimension(filterDistance)
+      .group(filterDistances);
+  
   
   dc.renderAll();
   
@@ -821,7 +852,7 @@ d3.csv("flights-3m.json", function(error, flights) {
   
   function pieChart(pD) {
     var id = "#dashboard"
-    var pC ={},    pieDim ={w:250, h: 250};
+    var pC ={},    pieDim ={w:200, h: 250};
     pieDim.r = Math.min(pieDim.w, pieDim.h)/2;
     console.log(pD);
     
