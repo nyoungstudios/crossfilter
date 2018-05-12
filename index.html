@@ -179,7 +179,7 @@ rect:hover {  fill:blue; }
     align:right;
     width:50px;
 }
-
+/* end of new css */
 
 </style>
 
@@ -245,6 +245,7 @@ rect:hover {  fill:blue; }
 
 <script src="crossfilter.v1.min.js"></script>
 <script src="d3.v3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dc/2.1.1/dc.js"></script>
 <script>
 
 // (It's CSV, but GitHub Pages only gzip's JSON at the moment.)
@@ -803,9 +804,18 @@ d3.csv("flights-3m.json", function(error, flights) {
     return d3.rebind(chart, brush, "on");
   }
   console.log(chart)
-  pieChart()
-      .dimension(delay)
-      .group(delays);
+  //pieChart()
+  //    .dimension(delay)
+  //    .group(delays);
+  
+  
+  var mediumArrayPieChart = dc.pieChart("#dashboard")
+    	    .height(250)
+    	    .width(250)
+    	    .dimension(delay)
+    	    .group(delays);
+  
+  dc.renderAll();
   
   function segColor(c){ return {low:"#807dba", mid:"#e08214",high:"#41ab5d"}[c]; }
   
