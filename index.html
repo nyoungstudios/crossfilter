@@ -158,6 +158,29 @@ aside {
   width: 220px;
 }
 
+/*new css*/
+path {  stroke: #fff; }
+path:hover {  opacity:0.9; }
+rect:hover {  fill:blue; }
+.legend tr{    border-bottom:1px solid grey; }
+.legend tr:first-child{    border-top:1px solid grey; }
+
+.legend{
+    margin-bottom:76px;
+    display:inline-block;
+    border-collapse: collapse;
+    border-spacing: 0px;
+}
+.legend td{
+    padding:4px 5px;
+    vertical-align:bottom;
+}
+.legendFreq, .legendPerc{
+    align:right;
+    width:50px;
+}
+
+
 </style>
 
 <div id="body">
@@ -779,12 +802,53 @@ d3.csv("flights-3m.json", function(error, flights) {
 
     return d3.rebind(chart, brush, "on");
   }
+  console.log(chart)
+  pieChart()
+      .dimension(delay)
+      .group(delays);
   
-  pieChart();
+  function segColor(c){ return {low:"#807dba", mid:"#e08214",high:"#41ab5d"}[c]; }
   
-  function pieChart() {
+  function pieChart(pD) {
+    var id = "#dashboard"
     var pC ={},    pieDim ={w:250, h: 250};
     pieDim.r = Math.min(pieDim.w, pieDim.h)/2;
+    console.log(pD);
+    
+    
+    // create svg for pie chart.
+    var piesvg = d3.select(id).append("svg")
+        .attr("width", pieDim.w).attr("height", pieDim.h).append("g")
+        .attr("transform", "translate("+pieDim.w/2+","+pieDim.h/2+")");
+
+    // create function to draw the arcs of the pie slices.
+    var arc = d3.svg.arc().outerRadius(pieDim.r - 10).innerRadius(0);
+    
+    // create a function to compute the pie slice angles.
+    var pie = d3.layout.pie().sort(null).value(function(d) { return d.delay; });
+    
+    var color = d3.scaleOrdinal(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+    
+    // Draw the pie slices.
+    piesvg.selectAll("path").data(pie(pD)).enter().append("path").attr("d", arc)
+        .each(function(d) { this._current = d; })
+        .style("fill", function(d) { return segColor(d.data.type); })
+    
+    
+    
+    chart.dimension = function(_) {
+      if (!arguments.length) return dimension;
+      dimension = _;
+      return chart;
+    };
+
+    chart.group = function(_) {
+      if (!arguments.length) return group;
+      group = _;
+      return chart;
+    };
+    
+    return pC;
     
     
   }
