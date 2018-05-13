@@ -181,6 +181,12 @@ rect:hover {  fill:blue; }
 }
 /* end of new css */
 
+  
+/* this will hide the date pie chart as it is not usefull, but it is important to have the date bar chart update the other pie charts */
+div#piedate {
+  display:none;
+}
+
 </style>
 
 <div id="body">
@@ -225,6 +231,7 @@ rect:hover {  fill:blue; }
 <div id="piehour" class="chart"><div class="title">Time of Day</div></div>
 <div id="piedelay" class="chart"><div class="title">Arrival Delay (min.)</div></div>
 <div id="piedistance" class="chart"><div class="title">Distance (mi.)</div></div>
+<div id="piedate" class="chart"></div>
 </div>
 <br>
 <br>
@@ -301,7 +308,7 @@ d3.csv("flights-3m.json", function(error, flights) {
       distance = flight.dimension(function(d) { return d.distance; }),
       distances = distance.group(function(d) { return Math.floor(d / 50) * 50; });
 
-  var filterDimensions = [hour, delay, distance];
+  var filterDimensions = [hour, delay, distance, date];
 
   var charts = [
 
@@ -398,21 +405,18 @@ d3.csv("flights-3m.json", function(error, flights) {
   window.filter = function(filters) {
     filters.forEach(function(d, i) {
       charts[i].filter(d);
-      if (i != 3) {
-        filterDimensions[i].filter(d);
-        dc.renderAll();
-      }
+      filterDimensions[i].filter(d);
+      dc.renderAll();
+      
     });
     renderAll();
   };
 
   window.filterExample = function(filters) {
     filters.forEach(function(d, i) { 
-      charts[i].filter(d); 
-      if (i != 3) {
+      charts[i].filter(d);
         filterDimensions[i].filter(d);
         dc.renderAll();
-      }
     });
     distanceToggle = true;
     list = d3.selectAll(".list")
@@ -766,15 +770,17 @@ d3.csv("flights-3m.json", function(error, flights) {
           .attr("x", x(extent[0]))
           .attr("width", x(extent[1]) - x(extent[0]));
       dimension.filterRange(extent);
-      if (id != 3) {
-        filterDimensions[id].filter([extent[0], extent[1]]);
-        //dc.renderAll();
-        for (var i = 0; i < pieCharts.length; i++) {
-          if (id != i) {
-            pieCharts[i].render();
-          }
+      
+      //sets filter for pie chart
+      filterDimensions[id].filter([extent[0], extent[1]]);
+      
+      //renders all pie charts that need to be changed
+      for (var i = 0; i < pieCharts.length; i++) {
+        if (id != i) {
+          pieCharts[i].render();
         }
       }
+
   
     });
 
@@ -867,7 +873,12 @@ d3.csv("flights-3m.json", function(error, flights) {
       .dimension(distance)
       .group(distances);
   
-  var pieCharts = [pieHourChart, pieDelayChart, pieDistanceChart];
+  
+  var invisiblepieDateChart = dc.pieChart("#piedate")
+      .dimension(date)
+      .group(dates);
+  
+  var pieCharts = [pieHourChart, pieDelayChart, pieDistanceChart, invisiblepieDateChart];
   
   dc.renderAll();
   
