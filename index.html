@@ -752,11 +752,10 @@ d3.csv("flights-3m.json", function(error, flights) {
           .attr("x", x(extent[0]))
           .attr("width", x(extent[1]) - x(extent[0]));
       dimension.filterRange(extent);
-      console.log(extent[0]);
-      console.log(extent[1]);
-      console.log(id);
-      filterDimensions[id].filter([extent[0], extent[1]]);
-      dc.renderAll();
+      if (id != 3) {
+        filterDimensions[id].filter([extent[0], extent[1]]);
+        dc.renderAll();
+      }
   
     });
 
@@ -766,6 +765,7 @@ d3.csv("flights-3m.json", function(error, flights) {
         div.select(".title a").style("display", "none");
         div.select("#clip-" + id + " rect").attr("x", null).attr("width", "100%");
         dimension.filterAll();
+        filterDimensions[id].filterAll();
       }
     });
 
