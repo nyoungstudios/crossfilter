@@ -396,12 +396,24 @@ d3.csv("flights-3m.json", function(error, flights) {
   }
   
   window.filter = function(filters) {
-    filters.forEach(function(d, i) { charts[i].filter(d); });
+    filters.forEach(function(d, i) {
+      charts[i].filter(d);
+      if (i != 3) {
+        filterDimensions[i].filter(d);
+        dc.renderAll();
+      }
+    });
     renderAll();
   };
 
   window.filterExample = function(filters) {
-    filters.forEach(function(d, i) { charts[i].filter(d); });
+    filters.forEach(function(d, i) { 
+      charts[i].filter(d); 
+      if (i != 3) {
+        filterDimensions[i].filter(d);
+        dc.renderAll();
+      }
+    });
     distanceToggle = true;
     list = d3.selectAll(".list")
       .data([milesList]);
