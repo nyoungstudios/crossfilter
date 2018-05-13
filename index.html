@@ -301,7 +301,7 @@ d3.csv("flights-3m.json", function(error, flights) {
       distance = flight.dimension(function(d) { return d.distance; }),
       distances = distance.group(function(d) { return Math.floor(d / 50) * 50; });
 
-  
+  var filterDimensions = [hour, delay, distance];
 
   var charts = [
 
@@ -752,6 +752,12 @@ d3.csv("flights-3m.json", function(error, flights) {
           .attr("x", x(extent[0]))
           .attr("width", x(extent[1]) - x(extent[0]));
       dimension.filterRange(extent);
+      console.log(extent[0]);
+      console.log(extent[1]);
+      console.log(id);
+      filterDimensions[id].filter([extent[0], extent[1]]);
+      dc.renderAll();
+  
     });
 
     brush.on("brushend.chart", function() {
@@ -835,15 +841,12 @@ d3.csv("flights-3m.json", function(error, flights) {
       .dimension(delay)
       .group(delays);
 
-  var filterDistance = distance.filter();
-  var filterDistances = filterDistance.group(function(d) { return Math.floor(d / 50) * 50; });
-  console.log(filterDistances.all())
   
   var pieDistanceChart = dc.pieChart("#piedistance")
       .height(200)
       .width(250)
-      .dimension(filterDistance)
-      .group(filterDistances);
+      .dimension(distance)
+      .group(distances);
   
   
   dc.renderAll();
