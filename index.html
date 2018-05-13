@@ -859,9 +859,7 @@ d3.csv("flights-3m.json", function(error, flights) {
       .height(200)
       .width(250)
       .dimension(hour)
-      .group(hours)
-  //    .slicesCap(10)
-  ;
+      .group(hours);
   
   var pieDelayChart = dc.pieChart("#piedelay")
       .height(200)
