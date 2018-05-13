@@ -424,7 +424,9 @@ d3.csv("flights-3m.json", function(error, flights) {
   
   window.reset = function(i) {
     charts[i].filter(null);
+    filterDimensions[i].filter(null);
     renderAll();
+    dc.renderAll();
   };
   
   //variable to for toggling top of bottom of delay list
