@@ -768,7 +768,12 @@ d3.csv("flights-3m.json", function(error, flights) {
       dimension.filterRange(extent);
       if (id != 3) {
         filterDimensions[id].filter([extent[0], extent[1]]);
-        dc.renderAll();
+        //dc.renderAll();
+        for (var i = 0; i < pieCharts.length; i++) {
+          if (id != i) {
+            pieCharts[i].render();
+          }
+        }
       }
   
     });
@@ -862,6 +867,7 @@ d3.csv("flights-3m.json", function(error, flights) {
       .dimension(distance)
       .group(distances);
   
+  var pieCharts = [pieHourChart, pieDelayChart, pieDistanceChart];
   
   dc.renderAll();
   
