@@ -231,6 +231,7 @@ div#piedate {
 <div id="piehour" class="chart"><div class="title">Time of Day</div></div>
 <div id="piedelay" class="chart"><div class="title">Arrival Delay (min.)</div></div>
 <div id="piedistance" class="chart"><div class="title">Distance (mi.)</div></div>
+<!--this is invisible-->
 <div id="piedate" class="chart"></div>
 </div>
 <br>
@@ -824,9 +825,11 @@ d3.csv("flights-3m.json", function(error, flights) {
       if (_) {
         brush.extent(_);
         dimension.filterRange(_);
+        filterDimensions[id].filter(_);
       } else {
         brush.clear();
         dimension.filterAll();
+        filterDimensions[id].filterAll();
       }
       brushDirty = true;
       return chart;
